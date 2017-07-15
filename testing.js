@@ -1,6 +1,22 @@
 var colors = require("colors/safe"),
   testing = {
     "api": {
+      "startTime": function() {
+        var data = testing.data,
+          idx = data.idx,
+          key = data.keys[idx];
+        data.results[key].times.start.push(
+          new Date()
+        );
+      },
+      "endTime": function() {
+        var data = testing.data,
+          idx = data.idx,
+          key = data.keys[idx];
+        data.results[key].times.end.push(
+          new Date()
+        );
+      },
       "assert": {
         "identical": function(one, two) {
           var result = one === two;
@@ -24,22 +40,39 @@ var colors = require("colors/safe"),
       };
       return keys;
     },
+    "timing": function(times) {
+      var starts = times.start,
+        ends = times.end,
+        startIdx = starts.length - 1,
+        endIdx = ends.length - 1,
+        start = starts[startIdx],
+        end = ends[endIdx];
+      return ["Time:", end.getTime() - start.getTime(), "Milliseconds"].join(" ");
+    },
     "pass": function() {
       var args = [].slice.call(arguments),
         data = testing.data,
         idx = data.idx,
-        key = data.keys[idx];
-      data.results[key].pass.push(args);
+        key = data.keys[idx],
+        result = data.results[key];
+      result.pass.push(args);
       data.pass++;
+      args.push(
+        testing.timing(result.times)
+      );
       console.log(colors.green(["   PASS!"].concat(args).join(" ")));
     },
     "fail": function() {
       var args = [].slice.call(arguments),
         data = testing.data,
         idx = data.idx,
-        key = data.keys[idx];
-      data.results[key].fail.push(args);
+        key = data.keys[idx],
+        result = data.results[key];
+      result.fail.push(args);
       data.fail++;
+      args.push(
+        testing.timing(result.times)
+      );
       console.log(colors.red(["   FAIL!"].concat(args).join(" ")));
     },
     "results": function() {
@@ -64,7 +97,11 @@ var colors = require("colors/safe"),
             console.log("Test", num + 1, key);
             testing.data.results[key] = {
               "pass": [],
-              "fail": []
+              "fail": [],
+              "times": {
+                "start": [],
+                "end": []
+              }
             };
             test = tests[key];
             test(testing.api);
