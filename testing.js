@@ -57,7 +57,7 @@ var colors = require("colors/safe"),
         result = data.results[key];
       result.pass.push(args);
       data.pass++;
-      args.push(
+      args.unshift(
         testing.timing(result.times)
       );
       console.log(colors.green(["   PASS!"].concat(args).join(" ")));
@@ -70,7 +70,7 @@ var colors = require("colors/safe"),
         result = data.results[key];
       result.fail.push(args);
       data.fail++;
-      args.push(
+      args.unshift(
         testing.timing(result.times)
       );
       console.log(colors.red(["   FAIL!"].concat(args).join(" ")));
@@ -79,11 +79,15 @@ var colors = require("colors/safe"),
       var data = testing.data,
         pass = data.pass,
         fail = data.fail,
+        start = data.start,
+        end = data.end,
+        mills = end - start,
         total = pass + fail;
       console.log(colors.white.bold("results:"));
       console.log(colors.yellow.bold("   ", total, "tests"));
       console.log(colors.green.bold("   ", pass, "pass"));
       console.log(colors.red.bold("   ", fail, "fail"));
+      console.log(colors.white.bold("    Time:", mills, "Milliseconds"));
     },
     "run": function(tests) {
       var keys = testing.init(tests),
@@ -106,10 +110,12 @@ var colors = require("colors/safe"),
             test = tests[key];
             test(testing.api);
           } else {
+            testing.data.end = new Date();
             testing.results();
           }
         };
       testing.api.done = next;
+      testing.data.start = new Date();
       next();
     }
   };
