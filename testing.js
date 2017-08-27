@@ -89,7 +89,7 @@ var colors = require("colors/safe"),
       console.log(colors.red.bold("   ", fail, "fail"));
       console.log(colors.white.bold("    Time:", mills, "Milliseconds"));
     },
-    "run": function(tests) {
+    "run": function(tests, context) {
       var keys = testing.init(tests),
         max = keys.length,
         num = -1,
@@ -108,7 +108,7 @@ var colors = require("colors/safe"),
               }
             };
             test = tests[key];
-            test(testing.api);
+            test(testing.api, context);
           } else {
             testing.data.end = new Date();
             testing.results();
