@@ -1,8 +1,11 @@
+// testing.js
 var 
   colors = require("colors/safe"),
   config = {
     "pass.color": "green",
-    "fail.color": "red"
+    "fail.color": "red",
+    "msg.start": "<< ",
+    "msg.end": " >>"
   },
   testing = {
     "api": {
@@ -23,12 +26,14 @@ var
         );
       },
       "assert": {
-        "identical": function(one, two) {
-          var result = one === two;
+        "identical": function(one, two, optionalMessage) {
+          var 
+            result = one === two,
+            msg = optionalMessage ? config['msg.start'] + optionalMessage + config['msg.end'] : '';
           if (result) {
-            testing.pass(one, "===", two);
+            testing.pass(one, "===", two, msg);
           } else {
-            testing.fail(one, "===", two);
+            testing.fail(one, "===", two, msg);
           }
         }
       }
