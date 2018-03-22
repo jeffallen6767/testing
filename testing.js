@@ -117,24 +117,26 @@ var
         num = -1,
         key, test,
         next = function() {
-          if (++num < max) {
-            key = keys[num];
-            testing.data.idx = num;
-            console.log("Test", num + 1, key);
-            testing.data.results[key] = {
-              "pass": [],
-              "fail": [],
-              "times": {
-                "start": [],
-                "end": []
-              }
-            };
-            test = tests[key];
-            test(testing.api, context);
-          } else {
-            testing.data.end = new Date();
-            testing.results();
-          }
+          setTimeout(function() {
+            if (++num < max) {
+              key = keys[num];
+              testing.data.idx = num;
+              console.log("Test", num + 1, key);
+              testing.data.results[key] = {
+                "pass": [],
+                "fail": [],
+                "times": {
+                  "start": [],
+                  "end": []
+                }
+              };
+              test = tests[key];
+              test(testing.api, context);
+            } else {
+              testing.data.end = new Date();
+              testing.results();
+            }
+          }, 1);
         };
       testing.api.done = next;
       testing.data.start = new Date();
